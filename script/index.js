@@ -18,8 +18,8 @@ function loadCatagories (){
 }
 
 
-function loadVideos(){
-    fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+function loadVideos(searchtext = ""){
+    fetch('https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchtext}')
     .then(res=>res.json())
     .then(data =>{
       removeActiveClass();
@@ -47,6 +47,23 @@ const loadCatagoriesVideos = (id) => {
   });
 };
 
+
+const loadVideoDetails=(videoid)=>{
+  console.log(videoid);
+  const url='https://openapi.programming-hero.com/api/phero-tube/video/${videoid}';
+  fetch(url)
+  .then(res=>res.json())
+  .then(data=>displayVideoDetails(data))
+};
+
+const displayVideoDetails = (video)=>{
+  console.log(video);
+  document.getElementById("video_details").showModal()
+  const detailscontainer=document.getElementById("details-container");
+
+  detailscontainer.innerHTML=`<h2>${video.title}</h2>`
+  
+};
 
 
 
@@ -80,6 +97,9 @@ const displayVideos=(videos)=>{
     return;
   }
 
+
+
+
   videos.forEach(video=>{
         //console.log(video);
 
@@ -110,12 +130,17 @@ const displayVideos=(videos)=>{
                 <p class="text-sm text-gray-500">${video.others.views} views</p>
             </div>
         </div>
+        <button onclick=loadVideoDetails('${video.video_id}') class="btn btn-block">Show details</button>
       </div>
         `
     videocontainer.append(videocard);
   });
 };
 
+document.getElementById("search-input").addEventListener("keyup",(e)=>{
+    const input=e.target.value;
+   loadVideos(input);
+});
 
 loadCatagories();
 // loadVideos();
